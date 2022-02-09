@@ -29,17 +29,21 @@
     </div>
 </template>
 <script>
+
+
+import storageUtil from '../util/StorageUtil'
 export default {
     name:'app',
     data(){
         return {
-            // 默认清单列表
-             todolist: [
-          {
-            content: '现在开始吧',
-            done: false
-          }
-        ],
+          // 调用存储优化get函数
+        todolist:storageUtil.get(),
+        //  [
+        //   {
+        //     content: '现在开始吧',
+        //     done: false
+        //   }
+        // ],
         // 双向数据：添加数据的属性：内容，状态
         newtodo: {
           content: '',
@@ -47,6 +51,7 @@ export default {
         },
         }
     },
+
        methods: {
         add: function () {
             // 去掉首尾空格
@@ -54,7 +59,7 @@ export default {
           if (content) {//判断是否为空
             //   列表数据添加新内容
             this.todolist.push(this.newtodo)
-            // 输入框清空
+            // input复位
             this.newtodo = { content: '', done: false }
           }
         },
@@ -65,15 +70,26 @@ export default {
         }
       },
       computed: {
-        //   已完成 
+        //   已完成   返回true
          donenum: function () {
           return this.todolist.filter(val=> val.done ).length
         },
-        // 未完成
+        // 未完成   false变成true返回
         nonenum: function () {
           return this.todolist.filter(val=> !val.done ).length
         }
+      },
+      watch: {
+        todolist: {
+        handler(items) {
+          // 调用存储优化save函数
+          storageUtil.save(items)
+        },
+        deep: true //深度监视
       }
+      }
+
+     
 
 };
 
